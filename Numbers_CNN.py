@@ -27,6 +27,5 @@ for batch in train_batches:
     print(f"Shape of data Tensor from current batch: {data.shape}")
     print(f"Shape of first image Tensor from current batch: {data[0].shape}")
     print(f"Shape of labels Tensor from current batch: {labels.shape}")
-    print(f"Labels included in the 'labels' Tensor from current batch:
-    {labels}")
+    print(f"Labels included in the 'labels' Tensor from current batch: {labels}")
     # Use "break" to exit the for loop

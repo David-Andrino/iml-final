@@ -52,8 +52,9 @@ dilation = 1
 stride = 1
 
 H = 28
-train = False # True for training the CNN, False for loading from disk
-evaluate = True # True for running the prediction on the whole database and calculate accuracy
+train = True # True for training the CNN, False for loading from disk
+evaluate = False # True for running the prediction on the whole database and calculate accuracy
+img_idx = 111 # If evaluate is false, predict this single image
 
 for i in range(0, 3):
     H = floor((H + 2*padding - dilation*(kernels[i][0]-1) - 1)/stride + 1)
@@ -102,16 +103,17 @@ if train:
 
     for epoch in range(num_epochs):
         for batch_idx, (X, y) in enumerate(train_batches):
-                y_pred = cnn(X)
-                loss = loss_fn(input=y_pred, target = y)
-                loss.backward()
-                opt.step()
-                opt.zero_grad()
+            y_pred = cnn(X)
+            loss = loss_fn(input=y_pred, target = y)
+            loss.backward()
+            opt.step()
+            opt.zero_grad()
 
+            if batch_idx % 50 == 0:
                 print(
                     f"Train Epoch: {epoch} [{ batch_idx *len(X)}/{len(train_batches.dataset)} ({100.0 * batch_idx / len(train_batches):.0f}%)]\tLoss: {loss.item():.6f}"
                 )
-                print(f"Epoch: {epoch} loss is {loss.item()}")
+        print(f"Epoch: {epoch} loss is {loss.item()}")
     
     with open("./cnn_model_state.pt", "wb") as f:
         torch.save(cnn.state_dict(), f)
@@ -120,11 +122,12 @@ else:
     with open("./cnn_model_state.pt", "rb") as f:
         cnn.load_state_dict(torch.load(f))
 
-if evaluate:
-    test_data = datasets.MNIST(root="data", download=True, train=False, transform=ToTensor())
-    test_batches = DataLoader(dataset=test_data, batch_size=32)
+# TEST DATA
+test_data = datasets.MNIST(root="data", download=True, train=False, transform=ToTensor())
+test_batches = DataLoader(dataset=test_data, batch_size=32)
+cnn.eval()
 
-    cnn.eval()
+if evaluate:
     with torch.no_grad(): # Avoid calculating gradients
         # Predict the images in batches
         for images, labels in test_batches:
@@ -135,3 +138,9 @@ if evaluate:
             # Measure the accuracy
             accuracy = (y_test_pred == labels).sum().item() / float(labels.size(0))
             print("VALIDATION SET ACCURACY: %.2f" % accuracy)
+else:
+    img_tensor, label = test_data[img_idx]
+    print(f"Shape of the tensor: {img_tensor.shape}")
+
+    img_tensor = img_tensor.unsqueeze(0)
+    print(f"Shape of the tensor: {img_tensor.shape}")

@@ -41,23 +41,43 @@ for batch in train_batches:
     break
 '''
 
-# Define the Convolutional Neural Network architecture
+# PARAMETER CALCULATION
+
+# PREDICTION
 import torch
-# CNN MNIST classifier
 class DigitClassifier(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.model = torch.nn.Sequential(
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(
+                in_channels=1, 
+                out_channels=out_1, 
+                kernel_size=(k1, k1)
+            ),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(
+                in_channels=out_1,
+                out_channels=out_2,
+                kernel_size=(k2, k2)
+            ),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(
+                in_channels=out2,
+                out_channels=out_3,
+                kernel_size=(k3, k3)
+            ),
             torch.nn.ReLU(),
             # Classification stage
             torch.nn.Flatten(),
-            torch.nn.Linear(…)
+            torch.nn.Linear(in_features, out_features=10)
         )
 
     def forward(self, x):
         return self.model(x)
+
+cnn = DigitClassifier()
+
+for b in train_batches:
+    X, y = b
+    y_pred = cnn(X)
+    exit()

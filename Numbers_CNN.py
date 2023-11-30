@@ -53,14 +53,15 @@ stride = 1
 
 H = 28
 train = True # True for training the CNN, False for loading from disk
-evaluate = False # True for running the prediction on the whole database and calculate accuracy
+evaluate = True # True for running the prediction on the whole database and calculate accuracy
 img_idx = 111 # If evaluate is false, predict this single image
+num_epochs = 5
 
 for i in range(0, 3):
     H = floor((H + 2*padding - dilation*(kernels[i][0]-1) - 1)/stride + 1)
 
 in_features = out[2]*H*H
-num_epochs = 1
+
 
 # PREDICTION
 import torch

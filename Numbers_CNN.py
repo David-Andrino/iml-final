@@ -48,11 +48,11 @@ class DigitClassifier(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.model = torch.nn.Sequential(
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(in_channels=1, out_channels=out_1, kernel_size=(3, 3)),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(in_channels=out_1, out_channels=out_2, kernel_size=(10, 10)),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(…),
+            torch.nn.Conv2d(in_channels=out_2, out_channels=out_3, kernel_size=(15, 15)),
             torch.nn.ReLU(),
             # Classification stage
             torch.nn.Flatten(),

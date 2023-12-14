@@ -1,6 +1,7 @@
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from matplotlib import pyplot as plt
 
 # Download the training data into the "data" folder
 train = datasets.MNIST(root="data", download=True, train=True, transform=ToTensor())
@@ -52,9 +53,9 @@ dilation = 1
 stride = 1
 
 H = 28
-train = True # True for training the CNN, False for loading from disk
-evaluate = True # True for running the prediction on the whole database and calculate accuracy
-img_idx = 111 # If evaluate is false, predict this single image
+train = False # True for training the CNN, False for loading from disk
+evaluate = False # True for running the prediction on the whole database and calculate accuracy
+img_idx = 118 # If evaluate is false, predict this single image
 num_epochs = 5
 
 for i in range(0, 3):
@@ -141,7 +142,25 @@ if evaluate:
             print("VALIDATION SET ACCURACY: %.2f" % accuracy)
 else:
     img_tensor, label = test_data[img_idx]
-    print(f"Shape of the tensor: {img_tensor.shape}")
-
     img_tensor = img_tensor.unsqueeze(0)
-    print(f"Shape of the tensor: {img_tensor.shape}")
+
+    # Predict with the CNN
+    with torch.no_grad():  # Avoid calculating gradients
+
+        # Generate the prediction
+        img_pred = cnn(img_tensor)
+        pred_label = torch.argmax(img_pred)
+
+        # Plot the result
+        plt.figure()
+        plt.suptitle(f"Original label: {label}")
+        plt.title(f"Predicted label: {pred_label}")
+        # From the tensor extract only the image
+        plt.imshow(img_tensor[0, 0, :, :], cmap="gray")
+        # Remove the numbers in the axes
+        plt.xticks([])
+        plt.yticks([])
+        plt.savefig(f"./prediction_of_test_image_{img_idx}.png")
+
+        plt.show()
+    
